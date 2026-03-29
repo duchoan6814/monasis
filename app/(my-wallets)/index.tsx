@@ -1,8 +1,10 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import { Text, YStack } from "tamagui";
 
 const MyWalletPage = () => {
   return (
-    <YStack f={1} jc="center" ai="center">
+    <YStack>
+      <CustomHeader title="My Wallets" />
       <Text>My Wallets Page</Text>
     </YStack>
   );

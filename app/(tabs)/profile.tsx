@@ -1,4 +1,5 @@
 import MenuItem from "@/components/profile/MenuItem";
+import { CustomHeader } from "@/components/CustomHeader";
 import { supabase } from "@/libs/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLanguageStore } from "@/store/useLanguageStore";
@@ -24,10 +25,8 @@ import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Button,
-  Heading,
   Paragraph,
   ScrollView,
   Separator,
@@ -61,7 +60,6 @@ const getInitials = (fullName: string, email: string): string => {
 const appVersion = Constants.expoConfig?.version ?? "1.0.0";
 
 export default function ProfileScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { t } = useTranslation();
   const { session } = useAuthStore();
@@ -99,12 +97,9 @@ export default function ProfileScreen() {
   };
 
   return (
-    <YStack f={1} bc="$background" style={{ paddingTop: insets.top }}>
+    <YStack f={1} bc="$background">
+      <CustomHeader title={t("profile.title")} hideBack />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Page title */}
-        <YStack px="$4" pt="$4" pb="$2">
-          <Heading size="$7">{t("profile.title")}</Heading>
-        </YStack>
 
         {/* Profile Card */}
         <YStack mx="$4" mt="$3" br="$5" bc="$color5">
