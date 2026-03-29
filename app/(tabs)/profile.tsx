@@ -275,18 +275,16 @@ export default function ProfileScreen() {
         <YStack mx="$4" mt="$5">
           <Button
             size="$4"
-            bc="$red2"
-            boc="$red5"
             bw={1}
             onPress={handleLogout}
-            icon={<LogOut size={18} col="$red10" />}
+            theme="red"
+            bg="$red2"
+            variant="outlined"
+            icon={<LogOut size={18} />}
           >
-            <Button.Text col="$red10" fow="600">
-              Đăng xuất
-            </Button.Text>
+            <Button.Text fow="600">Đăng xuất</Button.Text>
           </Button>
         </YStack>
-
         {/* Version Footer */}
         <YStack ai="center" py="$6" gap="$1">
           <SizableText size="$2" col="$color8">
