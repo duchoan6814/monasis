@@ -1,3 +1,4 @@
+import MenuItem from "@/components/profile/MenuItem";
 import { supabase } from "@/libs/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLanguageStore } from "@/store/useLanguageStore";
@@ -6,7 +7,6 @@ import {
   BarChart3,
   Bell,
   ChevronRight,
-  CreditCard,
   Globe,
   HelpCircle,
   Languages,
@@ -18,6 +18,7 @@ import {
   Shield,
   Star,
   Target,
+  Wallet2,
 } from "@tamagui/lucide-icons-2";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
@@ -37,51 +38,6 @@ import {
   XStack,
   YStack,
 } from "tamagui";
-
-type MenuItemProps = {
-  icon: React.ReactNode;
-  label: string;
-  onPress?: () => void;
-  danger?: boolean;
-  disabled?: boolean;
-  rightContent?: React.ReactNode;
-};
-
-const MenuItem = ({
-  icon,
-  label,
-  onPress,
-  danger,
-  disabled,
-  rightContent,
-}: MenuItemProps) => (
-  <XStack
-    ai="center"
-    px="$4"
-    py="$3"
-    gap="$3"
-    onPress={disabled ? undefined : onPress}
-    pressStyle={disabled ? {} : { o: 0.7 }}
-    o={disabled ? 0.45 : 1}
-  >
-    <XStack
-      w="$2.5"
-      h="$2.5"
-      br="$3"
-      bc={danger ? "$red3" : "$color3"}
-      ai="center"
-      jc="center"
-    >
-      {icon}
-    </XStack>
-    <Text f={1} col={danger ? "$red10" : "$color12"} fos="$4">
-      {label}
-    </Text>
-    {rightContent ?? (
-      <ChevronRight size={16} col={danger ? "$red8" : "$color9"} />
-    )}
-  </XStack>
-);
 
 const SectionHeader = ({ title }: { title: string }) => (
   <XStack px="$4" pt="$5" pb="$1">
@@ -117,7 +73,8 @@ export default function ProfileScreen() {
   const email = session?.user?.email ?? "";
   const fullName = (session?.user?.user_metadata?.full_name as string) ?? "";
   const initials = getInitials(fullName, email);
-  const displayName = fullName || email.split("@")[0] || t("profile.defaultUser");
+  const displayName =
+    fullName || email.split("@")[0] || t("profile.defaultUser");
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -126,23 +83,19 @@ export default function ProfileScreen() {
   };
 
   const handleLanguageChange = () => {
-    Alert.alert(
-      t("language.title"),
-      undefined,
-      [
-        {
-          text: t("language.vi"),
-          onPress: () => setLanguage("vi"),
-          style: language === "vi" ? "destructive" : "default",
-        },
-        {
-          text: t("language.en"),
-          onPress: () => setLanguage("en"),
-          style: language === "en" ? "destructive" : "default",
-        },
-        { text: t("language.cancel"), style: "cancel" },
-      ],
-    );
+    Alert.alert(t("language.title"), undefined, [
+      {
+        text: t("language.vi"),
+        onPress: () => setLanguage("vi"),
+        style: language === "vi" ? "destructive" : "default",
+      },
+      {
+        text: t("language.en"),
+        onPress: () => setLanguage("en"),
+        style: language === "en" ? "destructive" : "default",
+      },
+      { text: t("language.cancel"), style: "cancel" },
+    ]);
   };
 
   return (
@@ -218,9 +171,9 @@ export default function ProfileScreen() {
         <SectionHeader title={t("profile.sections.finance")} />
         <YStack mx="$4" br="$4" bc="$color2" ov="hidden">
           <MenuItem
-            icon={<CreditCard size={16} col="$blue10" />}
-            label={t("profile.finance.linkedAccounts")}
-            disabled
+            icon={<Wallet2 size={16} col="$blue10" />}
+            label={t("profile.finance.wallets")}
+            onPress={() => router.push("/(my-wallets)")}
           />
           <Separator />
           <MenuItem

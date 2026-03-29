@@ -15,14 +15,14 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: t("tabs.overview") }} />
-      <Tabs.Screen name="transactions" options={{ title: t("tabs.transactions") }} />
-      <Tabs.Screen name="budget" options={{ title: t("tabs.budget") }} />
-      <Tabs.Screen name="profile" options={{ title: t("tabs.profile") }} />
-      {/* Hidden from custom tab bar */}
       <Tabs.Screen
-        name="explore"
-        options={{ href: null, title: "Explore" }}
+        name="transactions"
+        options={{ title: t("tabs.transactions") }}
       />
+      <Tabs.Screen name="budget" options={{ title: t("tabs.budget") }} />
+      <Tabs.Screen name="(profile)" options={{ title: t("tabs.profile") }} />
+      {/* Hidden from custom tab bar */}
+      <Tabs.Screen name="explore" options={{ href: null, title: "Explore" }} />
     </Tabs>
   );
 }

@@ -123,13 +123,17 @@ export default function RootLayout() {
           <Stack initialRouteName={isLoggedIn ? "(tabs)" : "(auth)"}>
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(my-wallets)"
+              options={{ headerShown: false }}
+            />
 
             <Stack.Screen
               name="modal"
               options={{ presentation: "modal", title: "Modal" }}
             />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style={effectiveScheme === "dark" ? "light" : "dark"} />
         </ThemeProvider>
       </TamaguiProvider>
     </QueryClientProvider>
