@@ -10,6 +10,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { supabase } from "@/libs/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useThemeStore } from "@/store/useThemeStore";
 import { tamaguiConfig } from "@/tamagui.config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as SplashScreen from "expo-splash-screen";
@@ -33,8 +34,12 @@ if (__DEV__) {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const systemColorScheme = useColorScheme();
   const { isLoggedIn, isAuthInitialized } = useAuthStore();
+  const { colorScheme: storedScheme, _hasHydrated } = useThemeStore();
+
+  const effectiveScheme =
+    storedScheme === "system" ? (systemColorScheme ?? "light") : storedScheme;
 
   useEffect(() => {
     const init = async () => {
@@ -97,20 +102,20 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (isAuthInitialized) {
+    if (isAuthInitialized && _hasHydrated) {
       SplashScreen.hideAsync();
     }
-  }, [isAuthInitialized]);
+  }, [isAuthInitialized, _hasHydrated]);
 
-  if (!isAuthInitialized) {
+  if (!isAuthInitialized || !_hasHydrated) {
     return null;
   }
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={effectiveScheme}>
         <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          value={effectiveScheme === "dark" ? DarkTheme : DefaultTheme}
         >
           <Stack initialRouteName={isLoggedIn ? "(tabs)" : "(auth)"}>
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
