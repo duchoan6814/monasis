@@ -1,6 +1,10 @@
+import Alert from "@/components/ui/Alert";
+import { supabase } from "@/libs/supabase";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
 import { } from "@expo/vector-icons/MaterialIcons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +19,7 @@ import {
   Separator,
   SizableText,
   Span,
+  Spinner,
   Text,
   XStack,
   YStack,
@@ -33,11 +38,29 @@ const RegisterScreen = () => {
   const insets = useSafeAreaInsets();
   const route = useRouter();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const register = async (data: Yup.InferType<typeof formSchema>) => {
+    const res = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          full_name: data.name,
+        },
+      },
+    });
+
+    if (res?.error) {
+      throw new Error(res.error.message);
+    }
+
+    return res;
+  };
+
+  const { mutateAsync, isPending, isError, error } = useMutation({
+    mutationFn: register,
+  });
+
+  const { control, handleSubmit } = useForm({
     resolver: yupResolver(formSchema),
   });
 
@@ -45,8 +68,31 @@ const RegisterScreen = () => {
     route.push("/login");
   };
 
-  const onSubmit = (data: unknown) => {
-    console.log("Form data:", data);
+  const onSubmit = async (data: Yup.InferType<typeof formSchema>) => {
+    mutateAsync(
+      {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+      },
+      {
+        onSuccess: async (res) => {
+          const claims = await supabase.auth.getClaims();
+
+          if (claims?.error) {
+            supabase.auth.signOut();
+            throw new Error(claims.error.message);
+          }
+
+          useAuthStore.setState({
+            claims: claims?.data?.claims || null,
+            session: res.data.session,
+            isLoggedIn: true,
+          });
+          route.push("/(tabs)");
+        },
+      },
+    );
   };
 
   return (
@@ -67,6 +113,15 @@ const RegisterScreen = () => {
             Hãy để Monasis giúp bạn tối ưu hóa tài chính.
           </Paragraph>
         </YStack>
+
+        {isError && (
+          <XStack px="$4" mt="$4">
+            <Alert
+              message={error?.message || "Có lỗi xảy ra vui lòng thử lại"}
+            />
+          </XStack>
+        )}
+
         <YStack px="$4" mt="$4">
           <Form gap="$2" onSubmit={handleSubmit(onSubmit)}>
             <YStack>
@@ -178,7 +233,13 @@ const RegisterScreen = () => {
             </YStack>
 
             <Form.Trigger asChild>
-              <Button size="$4" mt="$6" bc="$color">
+              <Button
+                icon={isPending ? <Spinner color="$white" /> : undefined}
+                disabled={isPending}
+                size="$4"
+                mt="$6"
+                bc="$color"
+              >
                 <Button.Text col="$white">Đăng ký tài khoản</Button.Text>
               </Button>
             </Form.Trigger>
