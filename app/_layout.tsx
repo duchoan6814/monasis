@@ -8,8 +8,10 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import "@/libs/i18n";
 import { supabase } from "@/libs/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useLanguageStore } from "@/store/useLanguageStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { tamaguiConfig } from "@/tamagui.config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -37,6 +39,7 @@ export default function RootLayout() {
   const systemColorScheme = useColorScheme();
   const { isLoggedIn, isAuthInitialized } = useAuthStore();
   const { colorScheme: storedScheme, _hasHydrated } = useThemeStore();
+  const { _hasHydrated: isLanguageHydrated } = useLanguageStore();
 
   const effectiveScheme =
     storedScheme === "system" ? (systemColorScheme ?? "light") : storedScheme;
@@ -102,12 +105,12 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (isAuthInitialized && _hasHydrated) {
+    if (isAuthInitialized && _hasHydrated && isLanguageHydrated) {
       SplashScreen.hideAsync();
     }
-  }, [isAuthInitialized, _hasHydrated]);
+  }, [isAuthInitialized, _hasHydrated, isLanguageHydrated]);
 
-  if (!isAuthInitialized || !_hasHydrated) {
+  if (!isAuthInitialized || !_hasHydrated || !isLanguageHydrated) {
     return null;
   }
 

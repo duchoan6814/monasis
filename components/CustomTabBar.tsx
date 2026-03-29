@@ -3,12 +3,13 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";
 import React from "react";
 import { Platform, Pressable } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, XStack, YStack, useTheme } from "tamagui";
 
 type TabConfig = {
   name: string;
-  label: string;
+  labelKey: string;
   icon: keyof typeof Ionicons.glyphMap;
   activeIcon: keyof typeof Ionicons.glyphMap;
 };
@@ -16,25 +17,25 @@ type TabConfig = {
 const TAB_CONFIGS: TabConfig[] = [
   {
     name: "index",
-    label: "Tổng quan",
+    labelKey: "tabs.overview",
     icon: "home-outline",
     activeIcon: "home",
   },
   {
     name: "transactions",
-    label: "Giao dịch",
+    labelKey: "tabs.transactions",
     icon: "list-outline",
     activeIcon: "list",
   },
   {
     name: "budget",
-    label: "Ngân sách",
+    labelKey: "tabs.budget",
     icon: "wallet-outline",
     activeIcon: "wallet",
   },
   {
     name: "profile",
-    label: "Tài khoản",
+    labelKey: "tabs.profile",
     icon: "person-outline",
     activeIcon: "person",
   },
@@ -47,6 +48,7 @@ const TAB_BAR_HEIGHT = 64;
 export function CustomTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const bgColor = theme.background?.val ?? "#ffffff";
   const activeColor = theme.accentBackground?.val ?? "#AF36BF";
@@ -103,6 +105,7 @@ export function CustomTabBar({ state, navigation }: BottomTabBarProps) {
             <TabItem
               key={config.name}
               config={config}
+              label={t(config.labelKey)}
               isActive={isActive}
               activeColor={activeColor}
               inactiveColor={inactiveColor}
@@ -122,6 +125,7 @@ export function CustomTabBar({ state, navigation }: BottomTabBarProps) {
             <TabItem
               key={config.name}
               config={config}
+              label={t(config.labelKey)}
               isActive={isActive}
               activeColor={activeColor}
               inactiveColor={inactiveColor}
@@ -167,6 +171,7 @@ export function CustomTabBar({ state, navigation }: BottomTabBarProps) {
 
 type TabItemProps = {
   config: TabConfig;
+  label: string;
   isActive: boolean;
   activeColor: string;
   inactiveColor: string;
@@ -175,6 +180,7 @@ type TabItemProps = {
 
 function TabItem({
   config,
+  label,
   isActive,
   activeColor,
   inactiveColor,
@@ -198,7 +204,7 @@ function TabItem({
           color={color}
           numberOfLines={1}
         >
-          {config.label}
+          {label}
         </Text>
       </YStack>
     </Pressable>
