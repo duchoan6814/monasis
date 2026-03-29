@@ -242,7 +242,7 @@ export default function ProfileScreen() {
             label="Giao diện tối"
             onPress={toggleDarkMode}
             rightContent={
-              <Switch checked={isDark} size="$3">
+              <Switch pointerEvents="none" checked={isDark} size="$3">
                 <Switch.Thumb />
               </Switch>
             }
